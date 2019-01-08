@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>jquery可视区域图片懒加载</title>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        img {
+            width: 100%;
+            display: block;
+        }
+
+        .content {
+            width: 100%;
+        }
+
+
+    </style>
+</head>
+
+<body>
+
+<div class="content">
+    <div class="m1">
+        <img class="J-lazd" src="https://img.alicdn.com/imgextra/i1/94720297/TB2tVFMmYXlpuFjy1zbXXb_qpXa_!!94720297.jpg" data-src="https://img.alicdn.com/imgextra/i1/94720297/TB2jUhMpypnpuFjSZFkXXc4ZpXa_!!94720297.jpg" />
+    </div>
+    <div class="m1">
+        <img class="J-lazd" src="https://img.alicdn.com/imgextra/i1/94720297/TB2tVFMmYXlpuFjy1zbXXb_qpXa_!!94720297.jpg" data-src="https://img.alicdn.com/imgextra/i1/94720297/TB2jUhMpypnpuFjSZFkXXc4ZpXa_!!94720297.jpg" />
+    </div>
+    <div class="m1">
+        <img class="J-lazd" src="https://img.alicdn.com/imgextra/i1/94720297/TB2tVFMmYXlpuFjy1zbXXb_qpXa_!!94720297.jpg" data-src="https://img.alicdn.com/imgextra/i1/94720297/TB2jUhMpypnpuFjSZFkXXc4ZpXa_!!94720297.jpg" />
+    </div>
+    <div class="m1">
+        <img class="J-lazd" src="https://img.alicdn.com/imgextra/i1/94720297/TB2tVFMmYXlpuFjy1zbXXb_qpXa_!!94720297.jpg" data-src="https://img.alicdn.com/imgextra/i1/94720297/TB2jUhMpypnpuFjSZFkXXc4ZpXa_!!94720297.jpg" />
+    </div>
+    <div class="m1">
+        <img class="J-lazd" src="https://img.alicdn.com/imgextra/i1/94720297/TB2tVFMmYXlpuFjy1zbXXb_qpXa_!!94720297.jpg" data-src="https://img.alicdn.com/imgextra/i3/94720297/TB2T5RFm84lpuFjy1zjXXcAKpXa_!!94720297.png" />
+    </div>
+    <div class="m1">
+        <img class="J-lazd" src="https://img.alicdn.com/imgextra/i1/94720297/TB2tVFMmYXlpuFjy1zbXXb_qpXa_!!94720297.jpg" data-src="https://img.alicdn.com/imgextra/i3/94720297/TB2T5RFm84lpuFjy1zjXXcAKpXa_!!94720297.png" />
+    </div>
+    <div class="m1">
+        <img class="J-lazd" src="https://img.alicdn.com/imgextra/i1/94720297/TB2tVFMmYXlpuFjy1zbXXb_qpXa_!!94720297.jpg" data-src="https://img.alicdn.com/imgextra/i3/94720297/TB2T5RFm84lpuFjy1zjXXcAKpXa_!!94720297.png" />
+    </div>
+    <div class="m1">
+        <img class="J-lazd" src="https://img.alicdn.com/imgextra/i1/94720297/TB2tVFMmYXlpuFjy1zbXXb_qpXa_!!94720297.jpg" data-src="https://img.alicdn.com/imgextra/i3/94720297/TB2T5RFm84lpuFjy1zjXXcAKpXa_!!94720297.png" />
+    </div>
+    <div class="m1">
+        <img class="J-lazd" src="https://img.alicdn.com/imgextra/i1/94720297/TB2tVFMmYXlpuFjy1zbXXb_qpXa_!!94720297.jpg" data-src="https://img.alicdn.com/imgextra/i3/94720297/TB2T5RFm84lpuFjy1zjXXcAKpXa_!!94720297.png" />
+    </div>
+</div>
+
+<script type="text/javascript">
+    //调用
+    visibleImgLazyload();
+    //触发滚动 防止第一屏不加载
+    $("body,html").scrollTop(1);
+    /**
+     * 可视区域 img 加载
+     */
+    function visibleImgLazyload() {
+        //当前窗口高度
+        var winHeight = $(window).height();
+        //整个文档高度
+        var bodyHeight = $(document).height();
+        //如果图片不满屏，直接加载
+        if(bodyHeight <= winHeight) {
+            $(".J-lazd").each(function() {
+                var $this = $(this);
+                if($this.attr("data-url") != $this.attr("src")) {
+                    //如果为空，src设置为data-src
+                    if($this.attr("data-src")) {
+                        $this.attr("src", $this.attr("data-src"));
+                    } else {
+                        $this.attr("data-src", $this.attr("src"));
+                    }
+                }
+            });
+        } else {
+            //容差值 预加载上下100像素内的图片
+            var phase = 100;
+            $(document).on("scroll", function(e) {
+                $(".J-lazd").each(function() {
+                    var $this = $(this);
+                    //窗口的高度+看不见的顶部的高度=屏幕低部距离最顶部的高度
+                    var thisButtomTop = parseInt($(window).height()) + parseInt($(window).scrollTop());
+                    //屏幕顶部距离最顶部的高度   减去图片高度，上拉时也会点到图片就加载
+                    var thisTop = parseInt($(window).scrollTop()) - parseInt($this.height());
+                    var imgTop = parseInt($this.offset().top);
+                    if(imgTop >= thisTop - phase && imgTop <= thisButtomTop + phase && $this.attr("data-url") != $this.attr("src")) {
+                        //如果为空，src设置为data-src
+                        if($this.attr("data-src")) {
+                            $this.attr("src", $this.attr("data-src"));
+                        } else {
+                            $this.attr("data-src", $this.attr("src"));
+                        }
+                    }
+                });
+            });
+        }
+    }
+</script>
+
+</body>
+
+</html>
